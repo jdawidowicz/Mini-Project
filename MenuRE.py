@@ -4,7 +4,7 @@ products = []
 couriers = []
 orders = [{"Name": "John", "Address" : "20 LS29AJ", "Phone":"0798989899", "Status":"Preparing" }
 ,{"Name": "Paul", "Address" : "19 LS41AY", "Phone":"0780000000", "Status":"Delivered" }]
-statuslist = ["Preparing", "Delivered"]
+statuslist = ["Preparing", "Delivered", "Out for Delivery"]
 
 with open(r'Mini Project\products.txt', 'r') as p:
     for product in p.readlines():
