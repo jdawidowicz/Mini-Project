@@ -2,6 +2,7 @@
 wrongoption = ('Please try again and select a valid menu option')
 products = []
 couriers = []
+#hello its a new branch
 orders = [{"Name": "John", "Address" : "20 LS29AJ", "Phone":"0798989899", "Status":"Preparing" }
 ,{"Name": "Paul", "Address" : "19 LS41AY", "Phone":"0780000000", "Status":"Delivered" }]
 statuslist = ["Preparing", "Delivered", "Out for Delivery"]
@@ -46,7 +47,7 @@ def OrdersList():
     for order in orders:
         print(f'{orders.index(order)}.\t\t{order["Name"]}\t\t{order["Address"]}\t\t{order["Phone"]}\t{order["Status"]}')
 
-def ListStatus():
+def StatusList():
     for status in statuslist:
         print(f'{statuslist.index(status)}. {status}')
 
@@ -59,7 +60,7 @@ Main Menu:\n\
     1. Products\n\
     2. Couriers\n\
     3. Orders\n\
-    "))
+    "), 4)
     if mainmenuinput == 0:
         print('Goodbye!')
         with open(r'Mini Project\products.txt', 'w') as p:
@@ -174,7 +175,7 @@ Orders Menu:
                 print(wrongoption)
                 continue
             break
-        ListStatus()
+        StatusList()
         while True:
             newstatus = IsInt(input("-------------------\nWhat is the new status?(select index)\n"), len(statuslist))
             if newstatus == "notInt":
