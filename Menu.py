@@ -46,7 +46,7 @@ def OrdersList():
     for order in orders:
         print(f'{orders.index(order)}.\t\t{order["Name"]}\t\t{order["Address"]}\t\t{order["Phone"]}\t{order["Status"]}')
 
-def ListStatus():
+def StatusList():
     for status in statuslist:
         print(f'{statuslist.index(status)}. {status}')
 
@@ -59,7 +59,7 @@ Main Menu:\n\
     1. Products\n\
     2. Couriers\n\
     3. Orders\n\
-    "))
+    "), 4)
     if mainmenuinput == 0:
         print('Goodbye!')
         with open(r'Mini Project\products.txt', 'w') as p:
@@ -174,7 +174,7 @@ Orders Menu:
                 print(wrongoption)
                 continue
             break
-        ListStatus()
+        StatusList()
         while True:
             newstatus = IsInt(input("-------------------\nWhat is the new status?(select index)\n"), len(statuslist))
             if newstatus == "notInt":
