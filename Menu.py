@@ -1,85 +1,144 @@
-#Start of the Program
-def orderindex(orderslist):
-    for order in orderslist:
-        print(f'-------------------\n{orderslist.index(order)}. Name: {order["Name"]}\nAddress: {order["Address"]}\n\
-Phone Number: {order["Phone"]}\nStatus: {order["Status"]}')
-    return
-
-def liststatus(statuses):
-    for status in statuses:
-        print(f'{statuses.index(status)}. {status}')
-
 
 wrongoption = ('Please try again and select a valid menu option')
+products = []
+couriers = []
+orders = [{"Name": "John", "Address" : "20 LS29AJ", "Phone":"0798989899", "Status":"Preparing" }
+,{"Name": "Paul", "Address" : "19 LS41AY", "Phone":"0780000000", "Status":"Delivered" }]
+statuslist = ["Preparing", "Delivered", "Out for Delivery"]
 
-products = ['Fanta', 'Pepsi', 'Pepsi Max']
-orders = [{"Name": "John", "Address" : "20 Bigston Avenue", "Phone":"0798989899", "Status":"Preparing" }
-,{"Name": "Paul", "Address" : "19 Bigston Road", "Phone":"0780000000", "Status":"Delivered" }]
+with open(r'Mini Project\products.txt', 'r') as p: #currently reads file into a list, could read the file, keep file as a list straight into a variable, close it on menu
+    for product in p.readlines():
+        product = product.strip()
+        products.append(product)
 
-statuslist = ["Preparing", "Delivered"]
+with open(r'Mini Project\couriers.txt', 'r') as c: 
+    for courier in c.readlines():
+        courier = courier.strip()
+        couriers.append(courier)
 
-print('------------------- \nWelcome to the stock manager!')
-print('To select an option please type its number.')
+def IsInt(num, listrange): #Function to check menu inputs are integers, and within the available options (i.e. only 01234)
+        try:
+            integernum = int(num)
+            if integernum in range(listrange):
+                return integernum
+            else:
+                return "notInt"
+        except:
+            return "notInt"
 
-while True: #Main Menu will loop until a correct option is selected, either 0 or 1
-    mainmenuinput = input("""-------------------
-Main Menu:
-    0. Exit
-    1. Products
-    2. Orders
-    """)
-    mainmenuinput = int(mainmenuinput)
+
+def ProductsList(): #These 4 list functions print the contents of the respective objects
+    print('-------------------')
+    print('Index\t\tProduct')
+    for product in products:
+        print(f'{products.index(product)}.\t\t{product}')
+
+def CouriersList():
+    print('-------------------')
+    print('Index\t\tCourier')
+    for courier in couriers:
+        print(f'{couriers.index(courier)}.\t\t{courier}')
+
+
+def OrdersList():
+    print('-------------------')
+    print('Index\t\tName\t\tAddress\t\t\tPhone\t\tStatus')
+    for order in orders:
+        print(f'{orders.index(order)}.\t\t{order["Name"]}\t\t{order["Address"]}\t\t{order["Phone"]}\t{order["Status"]}')
+
+def ListStatus():
+    for status in statuslist:
+        print(f'{statuslist.index(status)}. {status}')
+
+
+
+def MainMenu():
+    mainmenuinput = IsInt(input("-------------------\n\
+Main Menu:\n\
+    0. Exit\n\
+    1. Products\n\
+    2. Couriers\n\
+    3. Orders\n\
+    "))
+    if mainmenuinput == 0:
+        print('Goodbye!')
+        with open(r'Mini Project\products.txt', 'w') as p:
+            for product in products:
+                p.write(f'{product}\n')
+        with open(r'Mini Project\couriers.txt', 'w') as c:
+            for courier in couriers:
+                c.write(f'{courier}\n')
+        return
+    elif mainmenuinput == 1:
+        ProductsMenu()
+    elif mainmenuinput == 2:
+        CouriersMenu()
+    elif mainmenuinput == 3:
+        OrdersMenu()
+    else:
+        print(wrongoption)
+        MainMenu()
+
+def ProductsMenu():
+    productsmenuinput = IsInt(input("-------------------\n\
+Product Menu:\n\
+    0. Return to Main Menu\n\
+    1. Products List\n\
+    2. Add a product\n\
+    3. Update existing product\n\
+    4. Delete existing product\n\
+    "), 5)
+
+    if productsmenuinput == 0:
+        MainMenu()
+
+    elif productsmenuinput == 1:
+        ProductsList()
+        ProductsMenu()
+
+    elif productsmenuinput == 2:
+        newproduct=input("Please enter the name of the product you would like to add: \n")
+        products.append(newproduct)
+        print(newproduct, ' has been added to the products list.')
+        ProductsMenu()
     
-    if mainmenuinput == 0: #If option 0 is selected, loop breaks and program finishes
-        print('Thank you for using the stock manager. Goodbye!')
-        break
-
-    elif mainmenuinput == 1: #Option 1 will go into the product menu, which is another nested while loop
+    elif productsmenuinput == 3:
+        ProductsList()
         while True:
-            selection = input("""-------------------
-Product Menu:
-    0. Return to Main Menu
-    1. Products List
-    2. Add a product
-    3. Update existing product
-    4. Delete existing product
-    """)
-            productsmenu = int(selection)
-            
-            if productsmenu == 0: #Breaks loop to return to main menu 
-                break
-
-            elif productsmenu == 1:
-                print('-------------------')
-                for product in products:
-                    print(product)
-
-            elif productsmenu == 2:
-                newproduct=input("Please enter the name of the product you would like to add: \n")
-                products.append(newproduct)
-                print(newproduct, ' has been added to the products list.')
-
-            elif productsmenu == 3:
-                for product in products:
-                    print(products.index(product), '. ', product)
-                selection = int(input('Please select the number of the product you would like to update. \n'))
-                updatedproduct = input('Please input the new name: \n')
-                print(products[selection], ' has been updated to:', updatedproduct)
-                products[selection] = updatedproduct
-
-            elif productsmenu == 4:
-                for product in products:    
-                    print(products.index(product), '. ', product)
-                selection = int(input('Please select the number of the product you would like to delete. \n'))
-                print(products[selection], ' has been removed from the list.')
-                del products[selection]
-            
-            elif productsmenu != (0 and 1 and 2 and 3 and 4):
+            selection = IsInt(input('Please select the number of the product you would like to update. \n'), len(products))
+            if selection == "notInt":
                 print(wrongoption)
                 continue
-    if mainmenuinput == 2:
+            oldproduct = products[selection]
+            break
+        updatedproduct = input('Please input the new name: \n')
+        print(oldproduct, ' has been updated to:', updatedproduct)
+        products[selection] = updatedproduct
+        ProductsMenu()
+
+    elif productsmenuinput == 4:
+        ProductsList()
         while True:
-            ordersinput = input("""-------------------
+            selection = IsInt(input('Please select the number of the product you would like to delete. \n'), len(products))
+            if selection == "notInt":
+                print(wrongoption)
+                continue
+            selproduct = products[selection]
+            break
+        print(selproduct, ' has been removed from the list.')
+        del selproduct
+        ProductsMenu()
+    
+    else:
+        print(wrongoption)
+        ProductsMenu()
+
+
+
+
+
+def OrdersMenu():
+    ordersmenuinput = IsInt(input("""-------------------
 Orders Menu:
     0. Return to Main Menu
     1. View Orders
@@ -87,42 +146,141 @@ Orders Menu:
     3. Update Order Status
     4. Update Existing Order
     5. Delete Existing Order
-    """)        
-            ordersmenu = int(ordersinput)
-            if ordersmenu == 0:
-                break
-                
-            elif ordersmenu == 1:
-                orderindex(orders)
+    """))   
+    if ordersmenuinput == 0:
+        MainMenu()
+
+    elif ordersmenuinput == 1:
+        OrdersList()
+        OrdersMenu()
+
+    elif ordersmenuinput == 2:
+        neworder = {}
+        keys = orders[0].keys()
+        for key in keys:
+            if key == "Status":
+                neworder[key] == "Preparing"
                 continue
+            value=input(f'What is the {key}?\n')
+            neworder[key] = value
+        orders.append(neworder)
+        print(f'{neworder["Name"]}\'s order has been added to the list as Preparing')    
 
-            elif ordersmenu == 2:
-                neworder = {}
-                keys = orders[0].keys()
-                for key in keys:
-                    if key == "Status":
-                        neworder[key] == "Preparing"
-                        continue
-                    value=input(f'What is the {key}?\n')
-                    neworder[key] = value
-                orders.append(neworder)
-                print(f'{neworder["Name"]}\'s order has been added to the list as Preparing')
-            
-
-            elif ordersmenu == 3:
-                orderindex(orders)
-                selection = int(input("-------------------\nPlease type the order number you would like to update.\n"))
-                liststatus(statuslist)
-                newstatus = int(input("What is the new status?(select index)\n"))
-                order = orders[selection]
-                print(f'Order number {selection} has been updated from {order["Status"]} to {statuslist[newstatus]}')
-                order["Status"] = statuslist[newstatus]
-            
-            
-                
-             
-   
-   
-    elif mainmenuinput != (0 and 1 and 2):
+    elif ordersmenuinput == 3:
+        OrdersList()
+        while True:
+            selection = IsInt(input("-------------------\nPlease type the order number you would like to update.\n"), len(orders))
+            if selection == "notInt":
                 print(wrongoption)
                 continue
+            break
+        ListStatus()
+        while True:
+            newstatus = IsInt(input("-------------------\nWhat is the new status?(select index)\n"), len(statuslist))
+            if newstatus == "notInt":
+                print(wrongoption)
+                continue
+            break
+        order = orders[selection]
+        print(f'Order number {selection} has been updated from {order["Status"]} to {statuslist[newstatus]}')
+        order["Status"] = statuslist[newstatus]
+        OrdersMenu()
+
+    elif ordersmenuinput == 4:
+        OrdersList()
+        while True:
+            selection = IsInt(input("-------------------\nPlease type the order number you would like to update.\n"), len(orders))
+            if selection == "notInt":
+                print(wrongoption)
+                continue
+            break
+        order = orders[selection]
+        print('For each of these values, type the new value or leave blank to keep the same')
+        for key in order.keys():
+            newvalue = input(f'{key}: {order[key]}. New {key}?\n')
+            if newvalue == '':
+                continue
+            order[key] = newvalue
+        print(f'Order No.{orders.index(order)} updated to:\nIndex\t\tName\t\tAddress\t\t\tPhone\t\tStatus')
+        print(f'{orders.index(order)}.\t\t{order["Name"]}\t\t{order["Address"]}\t\t{order["Phone"]}\t{order["Status"]}')
+        OrdersMenu()
+
+    elif ordersmenuinput == 5:
+        OrdersList()
+        while True:
+            selection = IsInt(input("-------------------\nPlease type the order number you would like to delete.\n"), len(orders))
+            if selection == "notInt":
+                print(wrongoption)
+                continue
+            break
+        print(f'Order No.{selection} has been deleted from the list')
+        del orders[selection]
+        OrdersMenu()
+    
+    else:
+        print(wrongoption)
+        OrdersMenu()
+
+
+
+def CouriersMenu():
+    couriersmenuinput = IsInt(input("""-------------------
+Couriers Menu:
+    0. Return to Main Menu
+    1. View Couriers
+    2. Add New Courier
+    3. Update Existing Courier
+    4. Delete Existing Courier
+    """), 5)
+    
+    if couriersmenuinput == 0:
+        MainMenu()
+    
+    elif couriersmenuinput == 1:
+        CouriersList()
+        CouriersMenu()
+
+    elif couriersmenuinput == 2:
+        newcourier=input("Please enter the name of the courier you would like to add: \n")
+        couriers.append(newcourier)
+        print(newcourier, ' has been added to the couriers list.')
+        CouriersMenu()
+    
+    elif couriersmenuinput == 3:
+        CouriersList()
+        while True:
+            selection = IsInt(input('Please select the number of the courier you would like to update. \n'), len(couriers))
+            if selection == "notInt":
+                print(wrongoption)
+                continue
+            oldcourier = couriers[selection]
+            break
+        updatedcourier = input('Please input the new name: \n')
+        print(oldcourier, ' has been updated to:', updatedcourier)
+        courier[selection] = updatedcourier
+        CouriersMenu()
+
+    elif couriersmenuinput == 4:
+        CouriersList()
+        while True:
+            selection = IsInt(input('Please select the number of the courier you would like to update. \n'), len(couriers))
+            if selection == "notInt":
+                print(wrongoption)
+                continue
+            selcourier = couriers[selection]
+            break
+        print(selcourier, ' has been removed from the list.')
+        del selcourier
+        CouriersMenu()
+    
+    else:
+        print(wrongoption)
+        ProductsMenu()
+
+
+
+MainMenu()
+
+
+
+    
