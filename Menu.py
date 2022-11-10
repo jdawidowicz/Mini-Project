@@ -52,9 +52,10 @@ def add_new(list, input=input): #Function to add new items to list
     for key in list[0].keys():
         if key == "Status" :
             newdict["Status"] = "Preparing"
+            continue
         if key == "Products":
             view_list(products)
-            print('Input index values')
+            print('Input index values separated by commas')
         elif key == "Courier":
             view_list(couriers)
             print('Please select index value')
@@ -99,7 +100,7 @@ def delete_from(list, input = input): #Function to delete item from a list
     view_list(list)
     try:
         index = int(input('---------------------------------------------------------\n\
-            Please select the index of the entry you would like to delete'))
+Please select the index of the entry you would like to delete: '))
         del list[index]
         print(f'Entry no.{index} successfully deleted')
     except:
