@@ -50,6 +50,14 @@ def view_list(list): #Function to display lists in a readable manner
 def add_new(list, input=input): #Function to add new items to list
     newdict={}
     for key in list[0].keys():
+        if key == "Status" :
+            newdict["Status"] = "Preparing"
+        if key == "Products":
+            view_list(products)
+            print('Input index values')
+        elif key == "Courier":
+            view_list(couriers)
+            print('Please select index value')
         value = input(f'Please enter the {key}: ')
         newdict[key] = value
     list.append(newdict)
