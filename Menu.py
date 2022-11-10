@@ -47,7 +47,7 @@ def view_list(list): #Function to display lists in a readable manner
             valuestr += '\t\t'
         print(valuestr)
 
-def add_new(list): #Function to add new items to list
+def add_new(list, input=input): #Function to add new items to list
     newdict={}
     for key in list[0].keys():
         value = input(f'Please enter the {key}: ')
@@ -56,10 +56,10 @@ def add_new(list): #Function to add new items to list
     print('New entry successfully added')    
 
 
-def update(list, status = False): #Function to update existing item in a list, for just order status update, status is set to True
+def update(list, status = False, input1 = input, input2 = input): #Function to update existing item in a list, for just order status update, status is set to True
         view_list(list)
         try:
-            index = int(input('---------------------------------------------------------\n\
+            index = int(input1('---------------------------------------------------------\n\
     Please select the index of the data you would like to update: '))
             sdict = list[index]
         except:
@@ -71,7 +71,7 @@ def update(list, status = False): #Function to update existing item in a list, f
             for status in statuslist:
                 print(f'{statuslist.index(status)}\t\t{status}')
             while True:
-                statusinput = input('\n')
+                statusinput = input2('\n')
                 try:
                     sdict["Status"] = statuslist[statusinput]
                     print(f'Status successfully changed to {statuslist[statusinput]}')
@@ -82,12 +82,12 @@ def update(list, status = False): #Function to update existing item in a list, f
 
         print(f'You have selected no. {index}.\nFor each of the following columns, please input a new value or leave blank to keep the same.')
         for key in sdict.keys():
-            newvalue = input(f'Current {key}: {sdict[key]}. New {key}?\n')
+            newvalue = input2(f'Current {key}: {sdict[key]}. New {key}?\n')
             if newvalue != '':
                 sdict[key] = newvalue
 
 
-def delete_from(list): #Function to delete item from a list
+def delete_from(list, input = input): #Function to delete item from a list
     view_list(list)
     try:
         index = int(input('---------------------------------------------------------\n\
@@ -203,4 +203,5 @@ Orders Menu:
                     print(wrongoption)
 
 
-main_menu()
+if __name__ == '__main__':
+    main_menu()
