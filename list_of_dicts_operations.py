@@ -1,16 +1,11 @@
-# Need to add more tests, SQL, Terminal output handling i.e clears, sleeps, art
-import os
-import pyfiglet
-import pymysql
-from csv_read_write import load_csv, write_csv
-
+from csv_read_write import load_csv
 
 wrongoption = ('Please try again and select a valid menu option')
-statuslist = ["Preparing", "Delivered", "Out for Delivery"]
-clear = lambda: os.system('cls')
+statuslist = ["Preparing", "Delivered", "Out for Delivery"] 
 products = load_csv("products") #read csv's into lists
 orders = load_csv("orders")
 couriers = load_csv("couriers")
+
 
 def view_list(list): #Function to display lists in a readable manner
     keystr = 'Index\t\t'
@@ -34,8 +29,8 @@ def add_new(list, input=input): #Function to add new items to list
     newdict={}
     for key in list[0].keys():
         
-        if key == "Status" : #If statements for edge cases, i.e to display courier list when selecting courier,
-            newdict["Status"] = "Preparing" #or automatically set status to "Preparing" for new order
+        if key == "Status" :
+            newdict["Status"] = "Preparing"
             print('Status set to Preparing')
             continue
         elif key == "Products":
@@ -96,114 +91,4 @@ Please select the index of the entry you would like to delete: '))
         print(f'Entry no.{index} successfully deleted')
     except:
         print('That is not a valid choice.\nReturning to menu...')    
-
-
-def main_menu():
-    print(pyfiglet.figlet_format('MAIN', font = 'starwars' ))
-    while True:
-        mainmenuinput = input("---------------------------------------------------------\n\
-Main Menu:\n\
-    0. Exit\n\
-    1. Products\n\
-    2. Couriers\n\
-    3. Orders\n\
-    ")
     
-        match mainmenuinput:
-            case "0":
-                print('Goodbye!')
-                write_csv("products", products)
-                write_csv("orders", orders)
-                write_csv("couriers", couriers)
-                return
-            
-            case '1':
-                products_menu()
-            case '2':
-                couriers_menu()
-            case '3':
-                orders_menu()
-            case _:
-                print(wrongoption)
-
-
-def products_menu():
-    while True:
-        productsmenuinput = input("---------------------------------------------------------\n\
-Products Menu:\n\
-    0. Return to Main Menu\n\
-    1. Products List\n\
-    2. Add a product\n\
-    3. Update existing product\n\
-    4. Delete existing product\n\
-    ")
-        match productsmenuinput:
-            case '0':
-                return
-            case '1':
-                view_list(products)
-            case '2':
-                add_new(products)
-            case '3':
-                update(products)
-            case '4':
-                delete_from(products)
-            case _:
-                print(wrongoption)
-
-
-def couriers_menu():
-    while True:
-        couriersmenuinput = input("""-------------------
-Couriers Menu:
-    0. Return to Main Menu
-    1. View Couriers
-    2. Add New Courier
-    3. Update Existing Courier
-    4. Delete Existing Courier
-    """)
-        match couriersmenuinput:
-            case '0':
-                return
-            case '1':
-                view_list(couriers)
-            case '2':
-                add_new(couriers)
-            case '3':
-                update(couriers)
-            case '4':
-                delete_from(couriers)
-            case _:
-                print(wrongoption)
-
-
-def orders_menu():
-    while True:
-        ordersmenuinput = input("""------------------------------------\n\
-Orders Menu:
-    0. Return to Main Menu
-    1. View Orders
-    2. Add New Order
-    3. Update Order Status
-    4. Update Existing Order
-    5. Delete Existing Order
-    """)
-        match ordersmenuinput:
-                case '0':
-                    return
-                case '1':
-                    view_list(orders)
-                case '2':
-                    add_new(orders)
-                case '3':
-                    update(orders, status = True)
-                case '4':
-                    update(orders)
-                case '5':
-                    delete_from(orders)
-                case _:
-                    print(wrongoption)
-
-
-if __name__ == '__main__':
-    main_menu()
