@@ -3,14 +3,14 @@ import os
 import pyfiglet
 import pymysql
 from csv_read_write import load_csv, write_csv
-from database_functions import load_table, add_new_record, update_record, delete_from
+from database_functions import load_table, add_new_record, update_record,delete_record
 
 wrongoption = ('Please try again and select a valid menu option')
 statuslist = ["Preparing", "Delivered", "Out for Delivery"]
 clear = lambda: os.system('cls')
-products = load_csv("products") #read csv's into lists
-orders = load_csv("orders")
-couriers = load_csv("couriers")
+# products = load_csv("products") #read csv's into lists
+# orders = load_csv("orders")
+# couriers = load_csv("couriers")
 
 def view_list(list): #Function to display lists in a readable manner
     keystr = 'Index\t\t'
@@ -30,20 +30,25 @@ def view_list(list): #Function to display lists in a readable manner
         print(valuestr)
 
 
-def add_new(list, input=input): #Function to add new items to list
+def add_new(table_name, input=input): #Function to add new items to list
     newdict={}
-    for key in list[0].keys():
-        
-        if key == "Status" : #If statements for edge cases, i.e to display courier list when selecting courier,
-            newdict["Status"] = "Preparing" #or automatically set status to "Preparing" for new order
+    table = load_table(table_name)
+    id_str = table_name.rstrip('s')
+    for key in table[0].keys():
+        if key == f'{id_str}__id':
+            continue
+        elif key == "status" : #If statements for edge cases, i.e to display courier list when selecting courier,
+            newdict["status"] = "Preparing" #or automatically set status to "Preparing" for new order
             print('Status set to Preparing')
             continue
-        elif key == "Products":
+        elif key == "products":
+            products = load_table('products')
             view_list(products)
             print('Input index values separated by commas')
-        elif key == "Courier":
+        elif key == "courier":
+            couriers = load_table('couriers')
             view_list(couriers)
-            print('Please select index value')
+            print('Please select ID value')
         while True:
             value = input(f'Please enter the {key}: ')
             if value == '':
@@ -51,8 +56,8 @@ def add_new(list, input=input): #Function to add new items to list
                 continue
             break
         newdict[key] = value
-    list.append(newdict)
     print('New entry successfully added')    
+    return newdict
 
 
 def update(list, status = False, input1 = input, input2 = input): #Function to update existing item in a list, for just order status update, status is set to True
@@ -141,9 +146,11 @@ Products Menu:\n\
             case '0':
                 return
             case '1':
+                products = load_table('products')
                 view_list(products)
             case '2':
-                add_new(products)
+                new_product = add_new(products)
+                add_new_record(new_product)
             case '3':
                 update(products)
             case '4':
@@ -166,6 +173,7 @@ Couriers Menu:
             case '0':
                 return
             case '1':
+                couriers = load_table('couriers')
                 view_list(couriers)
             case '2':
                 add_new(couriers)
