@@ -101,8 +101,7 @@ def update_record(table, newdict):
     id_str = table.rstrip('s')
     update_str = update_str.rstrip(',')
     cursor.execute(f'UPDATE {table} SET {update_str} WHERE {id_str}_id = {id_number};')
+    connection.commit()
+    disconnect(cursor,connection)
     
 
-add_new_record('products', {beans})
-print(load_table('products'))
-print(load_table('couriers'))

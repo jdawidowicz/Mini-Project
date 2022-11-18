@@ -3,7 +3,7 @@ import os
 import pyfiglet
 import pymysql
 from csv_read_write import load_csv, write_csv
-
+from database_functions import load_table, add_new_record, update_record, delete_from
 
 wrongoption = ('Please try again and select a valid menu option')
 statuslist = ["Preparing", "Delivered", "Out for Delivery"]
@@ -46,7 +46,7 @@ def add_new(list, input=input): #Function to add new items to list
             print('Please select index value')
         while True:
             value = input(f'Please enter the {key}: ')
-            if input == '':
+            if value == '':
                 print('Empty field not allowed')
                 continue
             break
