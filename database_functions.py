@@ -56,7 +56,8 @@ def add_new_record(table, newdict):
     for key in keys:
         try:
             value = float(newdict[key])
-            valuestr += f',{value}'
+            
+            valuestr += f',{value.rstrip(".0")}'
         except:
             value = newdict[key]
             valuestr+= f",'{value}'"
@@ -81,6 +82,7 @@ def delete_record(table, dictionary):
     connection.commit()
     
     disconnect(cursor,connection)
+    print('Record Deleted')
 
 def update_record(table, newdict):
     connection = connect()

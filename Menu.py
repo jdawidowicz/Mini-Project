@@ -59,11 +59,11 @@ def add_new(table_name, input=input): #Function to add new items to list, return
         elif key == "products":
             products = load_table('products')
             view_list(products)
-            print('Input index values separated by commas')
+            print('Input ID values separated by commas')
         elif key == "courier":
             couriers = load_table('couriers')
             view_list(couriers)
-            print('Please select ID value')
+            print('Please select courier ID')
         while True:
             value = input(f'Please enter the {key}: ')
             if value == '':
@@ -174,6 +174,8 @@ Products Menu:\n\
                 update_record('products', updated_dictionary)
             case '4':
                 dict_2_delete = dictionary_select('products')
+                if dict_2_delete == None:
+                    continue
                 delete_record('products',dict_2_delete)
             case _:
                 print(wrongoption)
@@ -194,13 +196,21 @@ Couriers Menu:
             case '0':
                 return
             case '1':
+                couriers = load_table('couriers')
                 view_list(couriers)
             case '2':
-                add_new(couriers)
+                new_courier = add_new('couriers')
+                add_new_record('couriers', new_courier)
             case '3':
-                update(couriers)
+                updated_dictionary = update('couriers')
+                if updated_dictionary == None:
+                    continue
+                update_record('couriers', updated_dictionary)
             case '4':
-                delete_from(couriers)
+                dict_2_delete = dictionary_select('couriers')
+                if dict_2_delete == None:
+                    continue
+                delete_record('couriers',dict_2_delete)
             case _:
                 print(wrongoption)
 
@@ -220,15 +230,26 @@ Orders Menu:
                 case '0':
                     return
                 case '1':
+                    orders = load_table('orders')
                     view_list(orders)
                 case '2':
-                    add_new(orders)
+                    new_order = add_new('orders')
+                    add_new_record('orders', new_order)
                 case '3':
-                    update(orders, status = True)
+                    updated_dictionary = update('orders', status = True)
+                    if updated_dictionary == None:
+                        continue
+                    update_record('orders', updated_dictionary)
                 case '4':
-                    update(orders)
+                    updated_dictionary = update('orders')
+                    if updated_dictionary == None:
+                        continue
+                    update_record('orders', updated_dictionary)
                 case '5':
-                    delete_from(orders)
+                    dict_2_delete = dictionary_select('orders')
+                    if dict_2_delete == None:
+                        continue
+                    delete_record('orders',dict_2_delete)
                 case _:
                     print(wrongoption)
 
