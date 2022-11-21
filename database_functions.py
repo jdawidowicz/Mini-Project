@@ -64,17 +64,17 @@ def add_new_record(table, newdict):
     valuestr = valuestr.lstrip(',')
     keystr = keystr.lstrip(',')
     sqlstr = (f'INSERT INTO {table} ({keystr}) VALUES ({valuestr})')
-    print(sqlstr)
 
     cursor.execute(sqlstr)
     connection.commit()
     
     disconnect(cursor,connection)
 
-def delete_record(table, id_number):
+def delete_record(table, dictionary):
     connection = connect()
     cursor = connection.cursor()
     tablestr = table.rstrip('s')
+    id_number = dictionary[f'{tablestr}_id']
 
 
     cursor.execute(f'DELETE FROM {table} WHERE {tablestr}_id = {id_number}')
@@ -85,9 +85,10 @@ def delete_record(table, id_number):
 def update_record(table, newdict):
     connection = connect()
     cursor = connection.cursor()
-
+    tablestr = table.rstrip('s')
     keys = list(newdict.keys())
-    id_number = keys[0]
+    id_number = newdict[f'{tablestr}_id']
+
     del keys[0]
 
     update_str=''
@@ -102,6 +103,7 @@ def update_record(table, newdict):
     update_str = update_str.rstrip(',')
     cursor.execute(f'UPDATE {table} SET {update_str} WHERE {id_str}_id = {id_number};')
     connection.commit()
+    print('Record updated')
     disconnect(cursor,connection)
     
 
