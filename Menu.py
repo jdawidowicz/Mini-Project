@@ -1,4 +1,4 @@
-# Need to add more tests, SQL, Terminal output handling i.e clears, sleeps, art
+#Main program
 import os
 import pyfiglet
 from csv_read_write import write_csv

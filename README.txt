@@ -17,8 +17,7 @@ out-for-delivery, delivered.
 •I need to receive regular software updates.
 '''
 
-The design consists of 2 main objects; firstly a database to store all data, and secondly a menu system in the terminal 
-to provide an easy to use interface for the database
+The design consists of 2 main objects; firstly a database to store all data, and secondly a menu system in the terminal to provide an easy to use interface for the database.
 
 These 2 objects are divided further for ease of use, the database has 3 tables to store and edit data about orders, products, and couriers.
 There is a 4th table which stores an order status list however remains static.
