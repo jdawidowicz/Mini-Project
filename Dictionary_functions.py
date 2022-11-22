@@ -66,7 +66,7 @@ def add_new(table_name, input=input):
 
 #Function to update existing dictionary from a table, returns updated dictionary
 #If status is set to true, only updates order status
-def update(table_name, status = False, input2 = input):
+def update(table_name, updatestatus = False, input2 = input):
         sdict = dictionary_select(table_name)
         id_str = table_name.rstrip('s')
         id_no = sdict[f'{id_str}_id']
@@ -74,12 +74,29 @@ def update(table_name, status = False, input2 = input):
         if sdict == None:
             print('Valid record not selected, returning to menu...')
             return
+        
+        if updatestatus == False:
 
-        if status == True:
+            print(f'You have selected no. {id_no}.\nFor each of the following columns, please input a new value or leave blank to keep the same.')
+            for key in sdict.keys():
+                 
+                if key == f'{id_str}_id':
+                    continue
+                elif key == 'status':
+                    updatestatus = True
+                    break
+
+                keyfmt = key.title().replace('_',' ')
+                newvalue = input2(f'Current {keyfmt}: {sdict[key]}. \nNew {keyfmt}:\n')
+                if newvalue != '':
+                    sdict[key] = newvalue
+
+        if updatestatus == True:
+
             statuslist = load_table('order_status')
             print(f'You have selected order no. {id_no}, with status: {sdict["status"]}.\
             Please select the new status ID.\n')
-            view_list(statuslist)
+            view_table('order_status')
             while True:
                 try:
                     statusinput = int(input2(''))
@@ -87,17 +104,8 @@ def update(table_name, status = False, input2 = input):
                         if statusinput == status['id']:
                             sdict["status"] = status['order_status']
                     print(f'Status successfully changed to {sdict["status"]}')
-                    return
+                    return sdict
                 except:
                     print(wrongoption)
-                    continue
-
-        print(f'You have selected no. {id_no}.\nFor each of the following columns, please input a new value or leave blank to keep the same.')
-        for key in sdict.keys(): 
-            if key == f'{id_str}_id':
-                continue
-            keyfmt = key.title().replace('_',' ')
-            newvalue = input2(f'Current {keyfmt}: {sdict[key]}. \nNew {keyfmt}:\n')
-            if newvalue != '':
-                sdict[key] = newvalue
+                    continue        
         return sdict
