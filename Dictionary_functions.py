@@ -78,8 +78,7 @@ def update(table_name, updatestatus = False, input2 = input):
         if updatestatus == False:
 
             print(f'You have selected no. {id_no}.\nFor each of the following columns, please input a new value or leave blank to keep the same.')
-            for key in sdict.keys():
-                 
+            for key in sdict.keys(): 
                 if key == f'{id_str}_id':
                     continue
                 elif key == 'status':
@@ -94,12 +93,14 @@ def update(table_name, updatestatus = False, input2 = input):
         if updatestatus == True:
 
             statuslist = load_table('order_status')
-            print(f'You have selected order no. {id_no}, with status: {sdict["status"]}.\
-            Please select the new status ID.\n')
+            print(f'You have selected order no. {id_no}, with status: {sdict["status"]}.')
             view_table('order_status')
+            print('Please select the new status ID:')
             while True:
                 try:
                     statusinput = int(input2(''))
+                    if statusinput == '':
+                        break
                     for status in statuslist:
                         if statusinput == status['id']:
                             sdict["status"] = status['order_status']

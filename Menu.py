@@ -14,7 +14,7 @@ def main_menu():
     while True:
         clear()
         print(pyfiglet.figlet_format('MAIN', font = 'starwars' ))
-        time.sleep(2)
+        time.sleep(1)
         mainmenuinput = input("---------------------------------------------------------\n\
 Main Menu:\n\
     [0]...Exit\n\
@@ -141,7 +141,7 @@ Orders Menu:\n\
                     new_order = add_new('orders')
                     add_new_record('orders', new_order)
                 case '3':
-                    updated_dictionary = update('orders', status = True)
+                    updated_dictionary = update('orders', updatestatus = True)
                     if updated_dictionary == None:
                         continue
                     update_record('orders', updated_dictionary)
