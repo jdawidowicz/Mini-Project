@@ -1,150 +1,40 @@
 # Need to add more tests, SQL, Terminal output handling i.e clears, sleeps, art
 import os
 import pyfiglet
-import pymysql
-from csv_read_write import load_csv, write_csv
-from database_functions import load_table, add_new_record, update_record,delete_record
+from csv_read_write import write_csv
+import time
+from database_functions import load_table, add_new_record, update_record, delete_record
+from dictionary_functions import view_table, add_new, update, dictionary_select
 
-wrongoption = ('Please try again and select a valid menu option')
-statuslist = ["Preparing", "Delivered", "Out for Delivery"]
 clear = lambda: os.system('cls')
-# products = load_csv("products") #read csv's into lists
-# orders = load_csv("orders")
-# couriers = load_csv("couriers")
-
-def view_list(list): #Function to display lists in a readable manner
-    keystr = ''
-    for key in list[0].keys():
-        keystr += key
-        keystr += '\t\t'
-        if key == "Address":
-            keystr += '\t\t\t\t'
-        if key == 'Status':
-            keystr += '\t'
-    print('---------------------------------------------------------\n'+keystr)
-    for dict in list:
-        valuestr =''
-        for value in dict.values():
-            valuestr += str(value)
-            valuestr += '\t\t'
-        print(valuestr)
-
-
-#Function to list data from a table, and take user input to select an item. Returns a dictionary
-def dictionary_select(table_name):
-    lod = load_table(table_name)
-    id_str = table_name.rstrip('s')
-    view_list(lod)
-    #try except clause to handle input errors
-    try: 
-        id_no = int(input('---------------------------------------------------------\n\
-Please type the ID of the data you would like to select: '))
-        for dictionary in lod:
-            if dictionary[f'{id_str}_id'] == id_no:
-                index = lod.index(dictionary)
-                sdict = lod[index]
-    except:
-        print('That is not a valid choice.\nReturning to menu...') 
-        return
-    return sdict
-
-
-#Function to take user input for table headers, returns a dictionary
-def add_new(table_name, input=input):
-    newdict={}
-    table = load_table(table_name)
-    id_str = table_name.rstrip('s')
-    for key in table[0].keys():
-        #If statements for extra information, i.e to display courier list when selecting courier,
-        #or automatically set status to "Preparing" for new order
-        if key == f'{id_str}_id':
-            continue
-        elif key == "status" : 
-            newdict["status"] = "Preparing" 
-            print('Status set to Preparing')
-            continue
-        elif key == "products":
-            products = load_table('products')
-            view_list(products)
-            print('Input ID values separated by commas')
-        elif key == "courier":
-            couriers = load_table('couriers')
-            view_list(couriers)
-            print('Please select courier ID')
-        while True:
-            value = input(f'Please enter the {key}: ')
-            if value == '':
-                print('Empty field not allowed')
-                continue
-            break
-        newdict[key] = value
-    print('New entry successfully added')    
-    return newdict
-
-
-#Function to update existing dictionary from a table, returns updated dictionary
-#If status is set to true, only updates order status
-def update(table_name, status = False, input2 = input):
-        sdict = dictionary_select(table_name)
-        id_str = table_name.rstrip('s')
-        id_no = sdict[f'{id_str}_id']
-        if sdict == None:
-            return
-
-        if status == True:
-            print(f'You have selected order no. {id_no}, with status: {sdict["status"]}.\
-            Please select the new status.\n')
-            print('Index\t\tStatus')
-            for status in statuslist:
-                print(f'{statuslist.index(status)}\t\t{status}')
-            while True:
-                statusinput = input2('\n')
-                try:
-                    sdict["status"] = statuslist[statusinput]
-                    print(f'Status successfully changed to {statuslist[statusinput]}')
-                    return
-                except:
-                    print(wrongoption)
-                    continue
-
-        print(f'You have selected no. {id_no}.\nFor each of the following columns, please input a new value or leave blank to keep the same.')
-        for key in sdict.keys(): 
-            if key == f'{id_str}_id':
-                continue
-            newvalue = input2(f'Current {key}: {sdict[key]}. New {key}?\n')
-            if newvalue != '':
-                sdict[key] = newvalue
-        return sdict
-
-        
-
-
-# def delete_from(table_name, input = input):#Function to delete item from a list
-#     lod = load_table(table_name)
-#     id_str = table_name.rstrip('s') 
-#     view_list(lod)
-#     try: # try except to handle index errors
-#         id = int(input('---------------------------------------------------------\n\
-# Please select the ID of the entry you would like to delete: '))
-#         del list[index]
-#         print(f'Entry no.{index} successfully deleted')
-#     except:
-#         print('That is not a valid choice.\nReturning to menu...')    
+wrongoption ='Please select a valid option to continue.'
 
 #Main loop
 def main_menu():
-    print(pyfiglet.figlet_format('MAIN', font = 'starwars' ))
     while True:
+        clear()
+        print(pyfiglet.figlet_format('MAIN', font = 'starwars' ))
+        time.sleep(2)
         mainmenuinput = input("---------------------------------------------------------\n\
 Main Menu:\n\
-    0. Exit\n\
-    1. Products\n\
-    2. Couriers\n\
-    3. Orders\n\
-    ")
-    
+    [0]...Exit\n\
+    [1]...Products\n\
+    [2]...Couriers\n\
+    [3]...Orders\n\
+\nPlease type the number you would like to select: ")
         match mainmenuinput:
             case "0":
+                csv_input = input('Would you like to export a backup in csv format?\n\
+[1].....Yes\n\
+[Any]...No\n')
+                if csv_input == '1':
+                    products = load_table('products')
+                    couriers = load_table('couriers')
+                    orders = load_table('orders')
+                    write_csv('products', products)
+                    write_csv('couriers', couriers)
+                    write_csv('orders', orders)
+
                 print('Goodbye!')
                 return
             
@@ -159,21 +49,23 @@ Main Menu:\n\
 
 
 def products_menu():
+    clear()
+    print(pyfiglet.figlet_format('PRODUCT', font = 'starwars' ))
+    time.sleep(1)
     while True:
         productsmenuinput = input("---------------------------------------------------------\n\
 Products Menu:\n\
-    0. Return to Main Menu\n\
-    1. Products List\n\
-    2. Add a product\n\
-    3. Update existing product\n\
-    4. Delete existing product\n\
-    ")
+    [0]...Return to Main Menu\n\
+    [1]...Products List\n\
+    [2]...Add a product\n\
+    [3]...Update existing product\n\
+    [4]...Delete existing product\n\
+\nPlease type the number you would like to select: ")
         match productsmenuinput:
             case '0':
                 return
             case '1':
-                products = load_table('products')
-                view_list(products)
+                view_table('products')
             case '2':
                 new_product = add_new('products')
                 add_new_record('products', new_product)
@@ -192,22 +84,23 @@ Products Menu:\n\
 
 
 def couriers_menu():
+    clear()
+    print(pyfiglet.figlet_format('COURIER', font = 'starwars' ))
+    time.sleep(1)
     while True:
-        couriers = load_table('couriers')
-        couriersmenuinput = input("""-------------------
-Couriers Menu:
-    0. Return to Main Menu
-    1. View Couriers
-    2. Add New Courier
-    3. Update Existing Courier
-    4. Delete Existing Courier
-    """)
+        couriersmenuinput = input("---------------------------------------------------------\n\
+Couriers Menu:\n\
+    [0]...Return to Main Menu\n\
+    [1]...View Couriers\n\
+    [2]...Add New Courier\n\
+    [3]...Update Existing Courier\n\
+    [4]...Delete Existing Courier\n\
+\nPlease type the number you would like to select: ")
         match couriersmenuinput:
             case '0':
                 return
             case '1':
-                couriers = load_table('couriers')
-                view_list(couriers)
+                view_table('couriers')
             case '2':
                 new_courier = add_new('couriers')
                 add_new_record('couriers', new_courier)
@@ -226,22 +119,24 @@ Couriers Menu:
 
 
 def orders_menu():
+    clear()
+    print(pyfiglet.figlet_format('ORDER', font = 'starwars' ))
+    time.sleep(1)
     while True:
-        ordersmenuinput = input("""------------------------------------\n\
-Orders Menu:
-    0. Return to Main Menu
-    1. View Orders
-    2. Add New Order
-    3. Update Order Status
-    4. Update Existing Order
-    5. Delete Existing Order
-    """)
+        ordersmenuinput = input("------------------------------------\n\
+Orders Menu:\n\
+    [0]...Return to Main Menu\n\
+    [1]...View Orders\n\
+    [2]...Add New Order\n\
+    [3]...Update Order Status\n\
+    [4]...Update Existing Order\n\
+    [5]...Delete Existing Order\n\
+\nPlease type the number you would like to select: ")
         match ordersmenuinput:
                 case '0':
                     return
                 case '1':
-                    orders = load_table('orders')
-                    view_list(orders)
+                    view_table('orders')
                 case '2':
                     new_order = add_new('orders')
                     add_new_record('orders', new_order)

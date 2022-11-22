@@ -1,6 +1,13 @@
 from database_functions import load_table
-
+import pandas as pd
+from tabulate import tabulate 
 wrongoption = ('Please try again and select a valid menu option')
+
+def view_table(table_name):
+    lod = load_table(table_name)
+    headers = lod[0].keys()
+    df = pd.DataFrame(data=lod)
+    print(tabulate(df, headers=headers, showindex = False, tablefmt = 'mixed_grid'))
 
 def view_list(list): #Function to display lists in a readable manner
     keystr = ''
@@ -23,8 +30,9 @@ def view_list(list): #Function to display lists in a readable manner
 #Function to list data from a table, and take user input to select an item. Returns a dictionary
 def dictionary_select(table_name):
     lod = load_table(table_name)
+    #id_str is just formatting for ID columns
     id_str = table_name.rstrip('s')
-    view_list(lod)
+    view_table(table_name)
     #try except clause to handle input errors
     try: 
         id_no = int(input('---------------------------------------------------------\n\
@@ -47,6 +55,7 @@ def add_new(table_name, input=input):
     for key in table[0].keys():
         #If statements for extra information, i.e to display courier list when selecting courier,
         #or automatically set status to "Preparing" for new order
+        keyfmt = key.title().replace('_',' ')
         if key == f'{id_str}_id':
             continue
         elif key == "status" : 
@@ -54,15 +63,13 @@ def add_new(table_name, input=input):
             print('Status set to Preparing')
             continue
         elif key == "products":
-            products = load_table('products')
-            view_list(products)
+            view_table('products')
             print('Input ID values separated by commas')
         elif key == "courier":
-            couriers = load_table('couriers')
-            view_list(couriers)
+            view_table('couriers')
             print('Please select courier ID')
         while True:
-            value = input(f'Please enter the {key}: ')
+            value = input(f'\nPlease enter the {keyfmt}: ')
             if value == '':
                 print('Empty field not allowed')
                 continue
@@ -86,13 +93,15 @@ def update(table_name, status = False, input2 = input):
         if status == True:
             statuslist = load_table('order_status')
             print(f'You have selected order no. {id_no}, with status: {sdict["status"]}.\
-            Please select the new status.\n')
+            Please select the new status ID.\n')
             view_list(statuslist)
             while True:
-                statusinput = input2('\n')
                 try:
-                    sdict["status"] = statuslist[statusinput]
-                    print(f'Status successfully changed to {statuslist[statusinput]}')
+                    statusinput = int(input2(''))
+                    for status in statuslist:
+                        if statusinput == status['id']:
+                            sdict["status"] = status['order_status']
+                    print(f'Status successfully changed to {sdict["status"]}')
                     return
                 except:
                     print(wrongoption)
@@ -102,7 +111,8 @@ def update(table_name, status = False, input2 = input):
         for key in sdict.keys(): 
             if key == f'{id_str}_id':
                 continue
-            newvalue = input2(f'Current {key}: {sdict[key]}. New {key}?\n')
+            keyfmt = key.title().replace('_',' ')
+            newvalue = input2(f'Current {keyfmt}: {sdict[key]}. \nNew {keyfmt}:\n')
             if newvalue != '':
                 sdict[key] = newvalue
         return sdict
