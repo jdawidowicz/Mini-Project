@@ -32,16 +32,11 @@ All data is persisted with the database, and is updated 'in real-time' as any co
 There is also an option to export a back up of the data onto csv files.
 
 I have kept the program as simple as possible. Since every record is read as a dictionary with different keys,
-all functions have been made to either process dictionaries or output dictionaries, and the same core functions are applied throughout
-the menus. These are individually tested to gurantee functionality, and the simplicity ensures that any future improvements or fixes
-are quick and easy to implement.
+all functions have been made to either process dictionaries or output dictionaries, and the same core functions are applied throughout the menus. 
+These are individually tested to gurantee functionality, and the simplicity ensures that any future improvements or fixes are quick and easy to implement.
 
 
-If I had more time, the main thing I would do is more unit testing on the database related functions, 
-as I found myself struggling to write these; and also add an option to import csv data as I found myself scratching my head on how 
-I could factor that feature in regarding the clash with the database.
+If I had more time, the main thing I would do is more unit testing on the database related functions, as I found myself struggling to write these; and also add an option to import csv data as I found myself scratching my head on how I could factor that feature in regarding the clash with the database.
 
-The most fun I had was certainly refactoring. I started with a very janky program with lots of copy-paste,
-and to get it down to just a dozen general functions retaining full functionality was very satisfying.
-I was particularly happy with getting sql statements working for any desired table with f strings. 
+The most fun I had was certainly refactoring. I started with a very janky program with lots of copy-paste, and to get it down to just a dozen general functions retaining full functionality was very satisfying. I was particularly happy with getting sql statements working for any desired table with f strings. 
 
