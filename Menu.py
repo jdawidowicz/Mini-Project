@@ -1,37 +1,19 @@
-import csv
+# Need to add more tests, SQL, Terminal output handling i.e clears, sleeps, art
 import os
+import pyfiglet
+import pymysql
+from csv_read_write import load_csv, write_csv
+from database_functions import load_table, add_new_record, update_record,delete_record
 
 wrongoption = ('Please try again and select a valid menu option')
-products = []#Empty lists to read csv's into
-couriers = []
-orders = []
 statuslist = ["Preparing", "Delivered", "Out for Delivery"]
-
-
-def load_csv(filename, list): #loads csv file as dictionaries into given list
-    path = os.path.realpath(f'{filename}.csv')
-    with open(path, newline='') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            list.append(row)
-
-def write_csv(filename, list):#Writes all data from list to a csv file in the same format as it reads
-    path = os.path.realpath(f'{filename}.csv')
-    keys=[]
-    for key in list[0].keys():
-        keys.append(key)
-    with open(path, 'w', newline='') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=keys)
-        writer.writeheader()
-        writer.writerows(list)
-
-
-load_csv("products", products)
-load_csv("orders", orders)
-load_csv("couriers", couriers)
+clear = lambda: os.system('cls')
+# products = load_csv("products") #read csv's into lists
+# orders = load_csv("orders")
+# couriers = load_csv("couriers")
 
 def view_list(list): #Function to display lists in a readable manner
-    keystr = 'Index\t\t'
+    keystr = ''
     for key in list[0].keys():
         keystr += key
         keystr += '\t\t'
@@ -41,75 +23,107 @@ def view_list(list): #Function to display lists in a readable manner
             keystr += '\t'
     print('---------------------------------------------------------\n'+keystr)
     for dict in list:
-        valuestr = f'{list.index(dict)}\t\t'
+        valuestr =''
         for value in dict.values():
-            valuestr += value
+            valuestr += str(value)
             valuestr += '\t\t'
         print(valuestr)
 
-def add_new(list, input=input): #Function to add new items to list
+def dictionary_select(table_name):
+    lod = load_table(table_name)
+    id_str = table_name.rstrip('s')
+    view_list(lod)
+    try: #try except clause to handle input errors
+        id_no = int(input('---------------------------------------------------------\n\
+Please type the ID of the data you would like to select: '))
+        for dictionary in lod:
+            if dictionary[f'{id_str}_id'] == id_no:
+                index = lod.index(dictionary)
+                sdict = lod[index]
+    except:
+        print('That is not a valid choice.\nReturning to menu...') 
+        return
+    return sdict
+
+def add_new(table_name, input=input): #Function to add new items to list, returns a dictionary
     newdict={}
-    for key in list[0].keys():
-        if key == "Status" :
-            newdict["Status"] = "Preparing"
+    table = load_table(table_name)
+    id_str = table_name.rstrip('s')
+    for key in table[0].keys():
+        if key == f'{id_str}_id':
             continue
-        if key == "Products":
+        elif key == "status" : #If statements for edge cases, i.e to display courier list when selecting courier,
+            newdict["status"] = "Preparing" #or automatically set status to "Preparing" for new order
+            print('Status set to Preparing')
+            continue
+        elif key == "products":
+            products = load_table('products')
             view_list(products)
-            print('Input index values separated by commas')
-        elif key == "Courier":
+            print('Input ID values separated by commas')
+        elif key == "courier":
+            couriers = load_table('couriers')
             view_list(couriers)
-            print('Please select index value')
-        value = input(f'Please enter the {key}: ')
+            print('Please select courier ID')
+        while True:
+            value = input(f'Please enter the {key}: ')
+            if value == '':
+                print('Empty field not allowed')
+                continue
+            break
         newdict[key] = value
-    list.append(newdict)
     print('New entry successfully added')    
+    return newdict
 
 
-def update(list, status = False, input1 = input, input2 = input): #Function to update existing item in a list, for just order status update, status is set to True
-        view_list(list)
-        try:
-            index = int(input1('---------------------------------------------------------\n\
-    Please select the index of the data you would like to update: '))
-            sdict = list[index]
-        except:
-            print('That is not a valid choice.\nReturning to menu...')
+def update(table_name, status = False, input2 = input): #Function to update existing item in a list, status update, status is set to True returns dict
+        sdict = dictionary_select(table_name)
+        id_str = table_name.rstrip('s')
+        id_no = sdict[f'{id_str}_id']
+        if sdict == None:
             return
-        if status == True:
-            print(f'You have selected no. {index}, with status: {sdict["Status"]}. Please select the new status.\n')
+
+        if status == True: #if status is set to true in args, just status of an order is changed
+            print(f'You have selected no. {id_no}, with status: {sdict["Status"]}. Please select the new status.\n')
             print('Index\t\tStatus')
             for status in statuslist:
                 print(f'{statuslist.index(status)}\t\t{status}')
             while True:
                 statusinput = input2('\n')
                 try:
-                    sdict["Status"] = statuslist[statusinput]
+                    sdict["status"] = statuslist[statusinput]
                     print(f'Status successfully changed to {statuslist[statusinput]}')
                     return
                 except:
                     print(wrongoption)
                     continue
 
-        print(f'You have selected no. {index}.\nFor each of the following columns, please input a new value or leave blank to keep the same.')
-        for key in sdict.keys():
+        print(f'You have selected no. {id_no}.\nFor each of the following columns, please input a new value or leave blank to keep the same.')
+        for key in sdict.keys(): #Takes input to update each column, blank leaves it the same
+            if key == f'{id_str}_id':
+                continue
             newvalue = input2(f'Current {key}: {sdict[key]}. New {key}?\n')
             if newvalue != '':
                 sdict[key] = newvalue
+        return sdict
+
+        
 
 
-def delete_from(list, input = input): #Function to delete item from a list
-    view_list(list)
-    try:
-        index = int(input('---------------------------------------------------------\n\
-Please select the index of the entry you would like to delete: '))
-        del list[index]
-        print(f'Entry no.{index} successfully deleted')
-    except:
-        print('That is not a valid choice.\nReturning to menu...')    
-    
-    
+# def delete_from(table_name, input = input):#Function to delete item from a list
+#     lod = load_table(table_name)
+#     id_str = table_name.rstrip('s') 
+#     view_list(lod)
+#     try: # try except to handle index errors
+#         id = int(input('---------------------------------------------------------\n\
+# Please select the ID of the entry you would like to delete: '))
+#         del list[index]
+#         print(f'Entry no.{index} successfully deleted')
+#     except:
+#         print('That is not a valid choice.\nReturning to menu...')    
 
 
 def main_menu():
+    print(pyfiglet.figlet_format('MAIN', font = 'starwars' ))
     while True:
         mainmenuinput = input("---------------------------------------------------------\n\
 Main Menu:\n\
@@ -122,9 +136,6 @@ Main Menu:\n\
         match mainmenuinput:
             case "0":
                 print('Goodbye!')
-                write_csv("products", products)
-                write_csv("orders", orders)
-                write_csv("couriers", couriers)
                 return
             
             case '1':
@@ -136,32 +147,43 @@ Main Menu:\n\
             case _:
                 print(wrongoption)
 
+
 def products_menu():
     while True:
         productsmenuinput = input("---------------------------------------------------------\n\
-    Products Menu:\n\
-        0. Return to Main Menu\n\
-        1. Products List\n\
-        2. Add a product\n\
-        3. Update existing product\n\
-        4. Delete existing product\n\
-        ")
+Products Menu:\n\
+    0. Return to Main Menu\n\
+    1. Products List\n\
+    2. Add a product\n\
+    3. Update existing product\n\
+    4. Delete existing product\n\
+    ")
         match productsmenuinput:
             case '0':
                 return
             case '1':
+                products = load_table('products')
                 view_list(products)
             case '2':
-                add_new(products)
+                new_product = add_new('products')
+                add_new_record('products', new_product)
             case '3':
-                update(products)
+                updated_dictionary = update('products')
+                if updated_dictionary == None:
+                    continue
+                update_record('products', updated_dictionary)
             case '4':
-                delete_from(products)
+                dict_2_delete = dictionary_select('products')
+                if dict_2_delete == None:
+                    continue
+                delete_record('products',dict_2_delete)
             case _:
                 print(wrongoption)
 
+
 def couriers_menu():
     while True:
+        couriers = load_table('couriers')
         couriersmenuinput = input("""-------------------
 Couriers Menu:
     0. Return to Main Menu
@@ -174,19 +196,28 @@ Couriers Menu:
             case '0':
                 return
             case '1':
+                couriers = load_table('couriers')
                 view_list(couriers)
             case '2':
-                add_new(couriers)
+                new_courier = add_new('couriers')
+                add_new_record('couriers', new_courier)
             case '3':
-                update(couriers)
+                updated_dictionary = update('couriers')
+                if updated_dictionary == None:
+                    continue
+                update_record('couriers', updated_dictionary)
             case '4':
-                delete_from(couriers)
+                dict_2_delete = dictionary_select('couriers')
+                if dict_2_delete == None:
+                    continue
+                delete_record('couriers',dict_2_delete)
             case _:
                 print(wrongoption)
 
+
 def orders_menu():
     while True:
-        ordersmenuinput = input("""-------------------
+        ordersmenuinput = input("""------------------------------------\n\
 Orders Menu:
     0. Return to Main Menu
     1. View Orders
@@ -199,15 +230,26 @@ Orders Menu:
                 case '0':
                     return
                 case '1':
+                    orders = load_table('orders')
                     view_list(orders)
                 case '2':
-                    add_new(orders)
+                    new_order = add_new('orders')
+                    add_new_record('orders', new_order)
                 case '3':
-                    update(orders, status = True)
+                    updated_dictionary = update('orders', status = True)
+                    if updated_dictionary == None:
+                        continue
+                    update_record('orders', updated_dictionary)
                 case '4':
-                    update(orders)
+                    updated_dictionary = update('orders')
+                    if updated_dictionary == None:
+                        continue
+                    update_record('orders', updated_dictionary)
                 case '5':
-                    delete_from(orders)
+                    dict_2_delete = dictionary_select('orders')
+                    if dict_2_delete == None:
+                        continue
+                    delete_record('orders',dict_2_delete)
                 case _:
                     print(wrongoption)
 
