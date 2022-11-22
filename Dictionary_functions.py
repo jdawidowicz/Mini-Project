@@ -3,28 +3,13 @@ import pandas as pd
 from tabulate import tabulate 
 wrongoption = ('Please try again and select a valid menu option')
 
+#Function to display records in a nice table
 def view_table(table_name):
     lod = load_table(table_name)
     headers = lod[0].keys()
     df = pd.DataFrame(data=lod)
     print(tabulate(df, headers=headers, showindex = False, tablefmt = 'mixed_grid'))
 
-def view_list(list): #Function to display lists in a readable manner
-    keystr = ''
-    for key in list[0].keys():
-        keystr += key
-        keystr += '\t\t'
-        if key == "Address":
-            keystr += '\t\t\t\t'
-        if key == 'Status':
-            keystr += '\t'
-    print('---------------------------------------------------------\n'+keystr)
-    for dict in list:
-        valuestr =''
-        for value in dict.values():
-            valuestr += str(value)
-            valuestr += '\t\t'
-        print(valuestr)
 
 
 #Function to list data from a table, and take user input to select an item. Returns a dictionary
