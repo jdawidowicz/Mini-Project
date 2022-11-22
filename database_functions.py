@@ -3,7 +3,7 @@ import os
 import string
 from dotenv import load_dotenv
 
-#make functions take/return dictionaries
+
 
 
 
@@ -29,7 +29,9 @@ def disconnect(cursor,connection):
     cursor.close()
     connection.close()
 
-def load_table(table): #returns list of dictionaries (lod)
+
+#Function to get data from a table, returns a list of dictionaries
+def load_table(table):
     connection = connect()
     cursor = connection.cursor()
     
@@ -43,6 +45,7 @@ def load_table(table): #returns list of dictionaries (lod)
     disconnect(cursor,connection)
     return lod
 
+#Function to add a new dictionary to the corresponding table
 def add_new_record(table, newdict):
     connection = connect()
     cursor = connection.cursor()
@@ -70,6 +73,8 @@ def add_new_record(table, newdict):
     connection.commit()
     
     disconnect(cursor,connection)
+
+    
 
 def delete_record(table, dictionary):
     connection = connect()
