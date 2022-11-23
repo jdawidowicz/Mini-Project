@@ -33,7 +33,7 @@ Please type the ID of the data you would like to select: '))
 
 
 #Function to take user input for table headers, returns a dictionary
-def add_new(table_name, input=input):
+def add_new(table_name):
     newdict={}
     table = load_table(table_name)
     id_str = table_name.rstrip('s')
@@ -66,7 +66,7 @@ def add_new(table_name, input=input):
 
 #Function to update existing dictionary from a table, returns updated dictionary
 #If status is set to true, only updates order status
-def update(table_name, updatestatus = False, input2 = input):
+def update(table_name, updatestatus = False):
         sdict = dictionary_select(table_name)
         id_str = table_name.rstrip('s')
         id_no = sdict[f'{id_str}_id']
@@ -86,7 +86,7 @@ def update(table_name, updatestatus = False, input2 = input):
                     break
 
                 keyfmt = key.title().replace('_',' ')
-                newvalue = input2(f'Current {keyfmt}: {sdict[key]}. \nNew {keyfmt}:\n')
+                newvalue = input(f'Current {keyfmt}: {sdict[key]}. \nNew {keyfmt}:\n')
                 if newvalue != '':
                     sdict[key] = newvalue
 
