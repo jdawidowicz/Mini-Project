@@ -43,6 +43,17 @@ class TestDictionaryFunctions(unittest.TestCase):
         mock_load.assert_called_once_with('products')
         expected = {'product':'test_product','price':'test_price'}
         self.assertEqual(actual, expected)
+
+    @patch('dictionary_functions.dictionary_select')
+    @patch('builtins.print')
+    @patch('builtins.input')
+    def test_update(self, mock_input: MagicMock, mock_print: MagicMock, mock_select: MagicMock):
+        mock_select.return_value = {'product_id':1,'product':'test_product','price':'test_price'}
+        mock_input.side_effect = ['new_product','new_price']
+        actual = dictionary_functions.update('products')
+        mock_print.assert_called()
+        expected = {'product_id':1,'product':'new_product','price':'new_price'}
+        self.assertEqual(actual, expected)
     
 
 
