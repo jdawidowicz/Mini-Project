@@ -98,7 +98,7 @@ def update(table_name, updatestatus = False):
             print('Please select the new status ID:')
             while True:
                 try:
-                    statusinput = int(input2(''))
+                    statusinput = int(input(''))
                     if statusinput == '':
                         break
                     for status in statuslist:
